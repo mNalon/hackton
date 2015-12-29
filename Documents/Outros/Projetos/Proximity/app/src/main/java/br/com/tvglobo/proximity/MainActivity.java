@@ -40,6 +40,8 @@ public class MainActivity extends Activity {
     private final Handler handler = new Handler();
     ArrayList<Wifi> connections=new ArrayList<Wifi>();
 
+    public long interval = 1;
+
     Thread thread = null;
 
     @Override
@@ -123,29 +125,64 @@ public class MainActivity extends Activity {
             wifiList = mainWifi.getScanResults();
             for(int i = 0; i < wifiList.size(); i++)
             {
-                if(wifiList.get(i).SSID.startsWith("DEPED"))
+                if(wifiList.get(i).SSID.startsWith("DEPED_TESTE")) {
+                    if(thread == null) {
+                        thread = new Thread(new Runnable() {
+                            public void run() {
+                                handler.post(new Runnable() {
+
+                                    public void run() {
+                                        while (true) {
+                                            playSound();
+                                            try
+                                            {
+                                                Thread.sleep(interval);
+                                            }
+                                            catch (InterruptedException e)
+                                            {
+                                                Thread.currentThread().interrupt(); // restore interrupted status
+                                            }
+                                        }
+
+                                    }
+                                });
+                            }
+                        });
+                        thread.start();
+                    }
                     connections.add(new Wifi(wifiList.get(i).SSID, wifiList.get(i).level));
+                    int level = wifiList.get(i).level;
+                    if(wifiList.get(i).SSID.startsWith("DEPED_TESTE"))
+                    {
+                        //thread.interrupt();
+                        if(level > -80 && level <= -70)
+                            interval = 5000;
+                            //playSound(5);
+                            //thread.start(5);
+                        else if(level > -70 && level <= -60)
+                            interval = 4000;
+                            //playSound(4);
+                            //thread.start(4);
+                        else if(level > -60 && level <= -50)
+                            interval = 3000;
+                            //playSound(3);
+                            //thread.start(3);
+                        else if(level > -50 && level <= -40)
+                            interval = 2000;
+                            //playSound(2);
+                            //thread.start(2);
+                        else if(level > -40)
+                            interval = 1000;
+                            //playSound(1);
+                            //thread.start(1);
+                    }
+
+                }
             }
+
             WifiAdapter wifiAdapter = new WifiAdapter(context, connections);
             wifiAdapter.notifyDataSetChanged();
             lv.setAdapter(wifiAdapter);
-
-            if (thread != null)
-                thread.stop();
-
-            /*thread = new Thread(new Runnable() {
-                public void run() {
-                    genTone();
-                    handler.post(new Runnable() {
-
-                        public void run() {
-                            playSound();
-                        }
-                    });
-                }
-            });
-
-            thread.start();*/
 
             /*ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
             toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 500);*/
@@ -161,17 +198,22 @@ public class MainActivity extends Activity {
         }
     }
 
-    private final int duration = 1; // seconds
-    private final int sampleRate = 8000;
-    private final int numSamples = duration * sampleRate;
-    private final double sample[] = new double[numSamples];
-    private final double freqOfTone = 440; // hz
 
-    private final byte generatedSnd[] = new byte[2 * numSamples];
-    void genTone(){
+    void playSound(){
+        int duration = 1; // seconds
+        int sampleRate = 1000;
+        int numSamples = duration * sampleRate;
+        double sample[] = new double[numSamples];
+        double freqOfTone = 440; // hz
+
+        byte generatedSnd[] = new byte[2 * numSamples];
+        final AudioTrack audioTrack = new AudioTrack(AudioManager.STREAM_MUSIC,
+                sampleRate, AudioFormat.CHANNEL_OUT_MONO,
+                AudioFormat.ENCODING_PCM_16BIT, generatedSnd.length,
+                AudioTrack.MODE_STATIC);
         // fill out the array
         for (int i = 0; i < numSamples; ++i) {
-            sample[i] = Math.sin(2 * Math.PI * i / (sampleRate/freqOfTone));
+                sample[i] = Math.sin(2 * Math.PI * i / (sampleRate/freqOfTone));
         }
 
         // convert to 16 bit pcm sound array
@@ -185,13 +227,6 @@ public class MainActivity extends Activity {
             generatedSnd[idx++] = (byte) ((val & 0xff00) >>> 8);
 
         }
-    }
-
-    void playSound(){
-        final AudioTrack audioTrack = new AudioTrack(AudioManager.STREAM_MUSIC,
-                sampleRate, AudioFormat.CHANNEL_OUT_MONO,
-                AudioFormat.ENCODING_PCM_16BIT, generatedSnd.length,
-                AudioTrack.MODE_STATIC);
         audioTrack.write(generatedSnd, 0, generatedSnd.length);
         audioTrack.play();
     }
