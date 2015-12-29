@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
+import android.media.MediaPlayer;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.media.ToneGenerator;
@@ -45,6 +46,9 @@ public class MainActivity extends Activity {
     public long interval = 1;
 
     Thread thread = null;
+
+    AsyncTaskSound asyncTaskSound;
+    MediaPlayer mp;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -86,8 +90,48 @@ public class MainActivity extends Activity {
                 mainWifi.startScan();
                 doInback();
             }
-        }, 1000);
+        }, 500);
 
+        ArrayList<Wifi> a = connections;
+        for(Wifi wifi : connections)
+        {
+            if(wifi.SSID.startsWith("DEPED_TESTE"))
+            {
+                if(mp != null)
+                    mp.stop();
+                //thread.interrupt();
+                if(wifi.level > -70 && wifi.level <= -60)
+                    mp = MediaPlayer.create(context, R.raw.beep_greenlight);
+                    //interval = 5000;
+                    //playSound(5);
+                    //thread.start(5);
+                else if(wifi.level > -60 && wifi.level <= -50)
+                    mp = MediaPlayer.create(context, R.raw.beep_green);
+                    //interval = 4000;
+                    //playSound(4);
+                    //thread.start(4);
+                else if(wifi.level > -50 && wifi.level <= -40)
+                    mp = MediaPlayer.create(context, R.raw.beep_yellow);
+                    //interval = 3000;
+                    //playSound(3);
+                    //thread.start(3);
+                else if(wifi.level > -40 && wifi.level <= -30)
+                    mp = MediaPlayer.create(context, R.raw.beep_orange);
+                    //interval = 2000;
+                    //playSound(2);
+                    //thread.start(2);
+                else if(wifi.level > -30)
+                    mp = MediaPlayer.create(context, R.raw.beep_red);
+                //interval = 1000;
+                //playSound(1);
+                //thread.start(1);
+                mp.start();
+//                        if(asyncTaskSound != null)
+//                            asyncTaskSound.cancel(true);
+//                        asyncTaskSound = new AsyncTaskSound();
+//                        asyncTaskSound.execute(interval);
+            }
+        }
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -127,56 +171,8 @@ public class MainActivity extends Activity {
             for(int i = 0; i < wifiList.size(); i++)
             {
                 if(wifiList.get(i).SSID.startsWith("DEPED_TESTE")) {
-                    if(thread == null) {
-                        thread = new Thread(new Runnable() {
-                            public void run() {
-                                handler.post(new Runnable() {
-
-                                    public void run() {
-                                        while (true) {
-                                            playSound();
-                                            try
-                                            {
-                                                Thread.sleep(interval);
-                                            }
-                                            catch (InterruptedException e)
-                                            {
-                                                Thread.currentThread().interrupt(); // restore interrupted status
-                                            }
-                                        }
-
-                                    }
-                                });
-                            }
-                        });
-                        thread.start();
-                    }
                     connections.add(new Wifi(wifiList.get(i).SSID, wifiList.get(i).level));
                     int level = wifiList.get(i).level;
-                    if(wifiList.get(i).SSID.startsWith("DEPED_TESTE"))
-                    {
-                        //thread.interrupt();
-                        if(level > -80 && level <= -70)
-                            interval = 5000;
-                            //playSound(5);
-                            //thread.start(5);
-                        else if(level > -70 && level <= -60)
-                            interval = 4000;
-                            //playSound(4);
-                            //thread.start(4);
-                        else if(level > -60 && level <= -50)
-                            interval = 3000;
-                            //playSound(3);
-                            //thread.start(3);
-                        else if(level > -50 && level <= -40)
-                            interval = 2000;
-                            //playSound(2);
-                            //thread.start(2);
-                        else if(level > -40)
-                            interval = 1000;
-                            //playSound(1);
-                            //thread.start(1);
-                    }
 
                 }
             }
@@ -198,39 +194,4 @@ public class MainActivity extends Activity {
             }*/
         }
     }
-
-
-    void playSound(){
-        int duration = 1; // seconds
-        int sampleRate = 8000;
-        int numSamples = duration * sampleRate;
-        double sample[] = new double[numSamples];
-        double freqOfTone = 440; // hz
-
-        byte generatedSnd[] = new byte[2 * numSamples];
-        final AudioTrack audioTrack = new AudioTrack(AudioManager.STREAM_MUSIC,
-                sampleRate, AudioFormat.CHANNEL_OUT_MONO,
-                AudioFormat.ENCODING_PCM_16BIT, generatedSnd.length,
-                AudioTrack.MODE_STATIC);
-        // fill out the array
-        for (int i = 0; i < numSamples; ++i) {
-                sample[i] = Math.sin(2 * Math.PI * i / (sampleRate/freqOfTone));
-        }
-
-        // convert to 16 bit pcm sound array
-        // assumes the sample buffer is normalised.
-        int idx = 0;
-        for (final double dVal : sample) {
-            // scale to maximum amplitude
-            final short val = (short) ((dVal * 32767));
-            // in 16 bit wav PCM, first byte is the low order byte
-            generatedSnd[idx++] = (byte) (val & 0x00ff);
-            generatedSnd[idx++] = (byte) ((val & 0xff00) >>> 8);
-
-        }
-        audioTrack.write(generatedSnd, 0, generatedSnd.length);
-        audioTrack.play();
-    }
-
 }
-
