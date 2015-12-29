@@ -1,6 +1,7 @@
 package br.com.tvglobo.proximity;
 
 import android.content.Context;
+import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,6 +56,7 @@ public class WifiAdapter extends BaseAdapter {
     {
         TextView _ssid;
         TextView _level;
+        ImageView _strenght;
     }
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
@@ -66,6 +68,17 @@ public class WifiAdapter extends BaseAdapter {
         holder._ssid.setText(connections[position].SSID);
         holder._level=(TextView) rowView.findViewById(R.id.level);
         holder._level.setText(String.valueOf(connections[position].level));
+        holder._strenght = (ImageView) rowView.findViewById(R.id.strength);
+        if(connections[position].level > -80 && connections[position].level <= -70)
+            holder._strenght.setImageResource(R.drawable.battery82);
+        else if(connections[position].level > -70 && connections[position].level <= -60)
+            holder._strenght.setImageResource(R.drawable.battery82);
+        else if(connections[position].level > -60 && connections[position].level <= -50)
+            holder._strenght.setImageResource(R.drawable.battery82);
+        else if(connections[position].level > -50 && connections[position].level <= -40)
+            holder._strenght.setImageResource(R.drawable.battery82);
+        else if(connections[position].level > -40)
+            holder._strenght.setImageResource(R.drawable.battery84);
 
         rowView.setOnClickListener(new View.OnClickListener() {
             @Override

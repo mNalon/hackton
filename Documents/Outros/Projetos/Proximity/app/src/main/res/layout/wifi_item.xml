@@ -1,22 +1,29 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
     android:orientation="horizontal" >
 
     <TextView
         android:id="@+id/ssid"
-        android:layout_gravity="center"
+        android:layout_gravity="left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="25dp"
-        android:text="ssid" />
+        android:text="ssid"
+        android:layout_weight="1"/>
 
     <TextView
         android:id="@+id/level"
-        android:layout_gravity="center"
+        android:layout_gravity="center_vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="25dp"
         android:text="Level" />
+
+    <ImageView
+        android:id="@+id/strength"
+        android:layout_gravity="center"
+        android:layout_width="48dp"
+        android:layout_height="48dp" />
 
 </LinearLayout> 

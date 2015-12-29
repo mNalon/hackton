@@ -5,6 +5,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.AudioFormat;
+import android.media.AudioManager;
+import android.media.AudioTrack;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.media.ToneGenerator;
+import android.net.Uri;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -33,6 +40,7 @@ public class MainActivity extends Activity {
     private final Handler handler = new Handler();
     ArrayList<Wifi> connections=new ArrayList<Wifi>();
 
+    Thread thread = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -115,13 +123,77 @@ public class MainActivity extends Activity {
             wifiList = mainWifi.getScanResults();
             for(int i = 0; i < wifiList.size(); i++)
             {
-                if(wifiList.get(i).SSID.startsWith("Tesouro"))
+                if(wifiList.get(i).SSID.startsWith("DEPED"))
                     connections.add(new Wifi(wifiList.get(i).SSID, wifiList.get(i).level));
             }
             WifiAdapter wifiAdapter = new WifiAdapter(context, connections);
             wifiAdapter.notifyDataSetChanged();
             lv.setAdapter(wifiAdapter);
+
+            if (thread != null)
+                thread.stop();
+
+            thread = new Thread(new Runnable() {
+                public void run() {
+                    genTone();
+                    handler.post(new Runnable() {
+
+                        public void run() {
+                            playSound();
+                        }
+                    });
+                }
+            });
+
+            thread.start();
+
+            /*ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
+            toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 500);*/
+
+
+            /*try {
+                Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.);
+                Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+                r.play();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }*/
         }
+    }
+
+    private final int duration = 1; // seconds
+    private final int sampleRate = 8000;
+    private final int numSamples = duration * sampleRate;
+    private final double sample[] = new double[numSamples];
+    private final double freqOfTone = 440; // hz
+
+    private final byte generatedSnd[] = new byte[2 * numSamples];
+    void genTone(){
+        // fill out the array
+        for (int i = 0; i < numSamples; ++i) {
+            sample[i] = Math.sin(2 * Math.PI * i / (sampleRate/freqOfTone));
+        }
+
+        // convert to 16 bit pcm sound array
+        // assumes the sample buffer is normalised.
+        int idx = 0;
+        for (final double dVal : sample) {
+            // scale to maximum amplitude
+            final short val = (short) ((dVal * 32767));
+            // in 16 bit wav PCM, first byte is the low order byte
+            generatedSnd[idx++] = (byte) (val & 0x00ff);
+            generatedSnd[idx++] = (byte) ((val & 0xff00) >>> 8);
+
+        }
+    }
+
+    void playSound(){
+        final AudioTrack audioTrack = new AudioTrack(AudioManager.STREAM_MUSIC,
+                sampleRate, AudioFormat.CHANNEL_OUT_MONO,
+                AudioFormat.ENCODING_PCM_16BIT, generatedSnd.length,
+                AudioTrack.MODE_STATIC);
+        audioTrack.write(generatedSnd, 0, generatedSnd.length);
+        audioTrack.play();
     }
 
 }
