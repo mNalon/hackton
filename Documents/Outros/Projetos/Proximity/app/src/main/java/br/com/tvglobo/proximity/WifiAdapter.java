@@ -85,7 +85,7 @@ public class WifiAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                Toast.makeText(context, "You Clicked " + connections[position].SSID, Toast.LENGTH_LONG).show();
+                //Toast.makeText(context, "You Clicked " + connections[position].SSID, Toast.LENGTH_LONG).show();
                 LinearLayout linearLayoutParent = (LinearLayout) v.getParent().getParent();
                 TextView selectedSSID = (TextView) linearLayoutParent.findViewById(R.id.selectedView);
                 selectedSSID.setText(connections[position].SSID);
