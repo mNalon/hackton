@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Proximity</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="prompt">Choose a country</string>
+    <string name="action_settings">Settings</string>
+    <string-array name="countries_array">
+        <item>China</item>
+        <item>India</item>
+        <item>USA</item>
+        <item>Indonesia</item>
+        <item>Brazil</item>
+        <item>Pakistan</item>
+        <item>Nigeria</item>
+        <item>Bangladesh</item>
+        <item>Russia</item>
+    </string-array>
+    <string name="title_activity_list_paired_devices">ListPairedDevicesActivity</string>
+</resources>
