@@ -3,13 +3,27 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     >
+
     <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="25dp"
         android:textStyle="bold"
-        android:text="Caça ao Tesouro" />
+        android:text="Caça ao Tesouro"
+        />
+
+    <TextView
+        android:id="@+id/selectedView"
+        android:layout_height="200dp"
+        android:layout_width="match_parent"
+        android:text="SSID SELECIONADO"
+        android:gravity="center"
+        android:background="@drawable/back"
+        android:textSize="25dp"
+        android:textColor="@android:color/holo_red_light"/>
+
+
 
     <ListView
         android:id="@+id/listView"

@@ -133,7 +133,7 @@ public class MainActivity extends Activity {
             if (thread != null)
                 thread.stop();
 
-            thread = new Thread(new Runnable() {
+            /*thread = new Thread(new Runnable() {
                 public void run() {
                     genTone();
                     handler.post(new Runnable() {
@@ -145,7 +145,7 @@ public class MainActivity extends Activity {
                 }
             });
 
-            thread.start();
+            thread.start();*/
 
             /*ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
             toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 500);*/

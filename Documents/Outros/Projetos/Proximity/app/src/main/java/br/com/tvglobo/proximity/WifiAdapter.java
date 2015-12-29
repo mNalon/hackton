@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -85,6 +86,9 @@ public class WifiAdapter extends BaseAdapter {
             public void onClick(View v) {
                 // TODO Auto-generated method stub
                 Toast.makeText(context, "You Clicked " + connections[position].SSID, Toast.LENGTH_LONG).show();
+                LinearLayout linearLayoutParent = (LinearLayout) v.getParent().getParent();
+                TextView selectedSSID = (TextView) linearLayoutParent.findViewById(R.id.selectedView);
+                selectedSSID.setText(connections[position].SSID);
             }
         });
         return rowView;
