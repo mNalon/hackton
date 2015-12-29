@@ -14,11 +14,13 @@ import android.media.ToneGenerator;
 import android.net.Uri;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -116,7 +118,6 @@ public class MainActivity extends Activity {
     {
         public void onReceive(Context c, Intent intent)
         {
-
             connections=new ArrayList<Wifi>();
             ArrayList<Float> Signal_Strenth= new ArrayList<Float>();
 
@@ -201,7 +202,7 @@ public class MainActivity extends Activity {
 
     void playSound(){
         int duration = 1; // seconds
-        int sampleRate = 1000;
+        int sampleRate = 8000;
         int numSamples = duration * sampleRate;
         double sample[] = new double[numSamples];
         double freqOfTone = 440; // hz
@@ -232,3 +233,4 @@ public class MainActivity extends Activity {
     }
 
 }
+
