@@ -22,7 +22,6 @@ import br.com.tvglobo.proximity.Classes.Wifi;
 public class WifiAdapter extends BaseAdapter {
     Wifi [] connections;
     Context context;
-    int [] imageId;
 
     public WifiAdapter(Context _context, ArrayList<Wifi> _connections) {
         connections = new Wifi[_connections.size()];
@@ -51,6 +50,10 @@ public class WifiAdapter extends BaseAdapter {
     public long getItemId(int position) {
         // TODO Auto-generated method stub
         return position;
+    }
+
+    public void setConnections(Wifi [] connections){
+        this.connections = connections;
     }
 
     public class Holder
@@ -89,6 +92,7 @@ public class WifiAdapter extends BaseAdapter {
                 LinearLayout linearLayoutParent = (LinearLayout) v.getParent().getParent();
                 TextView selectedSSID = (TextView) linearLayoutParent.findViewById(R.id.selectedView);
                 selectedSSID.setText(connections[position].SSID);
+                MainActivity.selectedSSID = connections[position].SSID;
             }
         });
         return rowView;
